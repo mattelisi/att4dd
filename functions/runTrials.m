@@ -7,7 +7,10 @@ function [design] = runTrials(design, datFile, scr, visual, const, el)
 %
 
 % hide cursor 
-HideCursor;
+
+if const.TEST == 0;
+    HideCursor;
+end
 
 % preload important functions
 % NOTE: adjusting timer with GetSecsTest

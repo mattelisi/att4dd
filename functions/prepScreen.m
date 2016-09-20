@@ -5,7 +5,9 @@ function scr = prepScreen(const)
 % Matteo Lisi, 2013
 %
 
-HideCursor;
+if const.TEST == 0;
+    HideCursor;
+end
 
 scr.subDist = 120;   % subject distance (cm)
 scr.colDept = 32;
@@ -17,7 +19,8 @@ scr.allScreens = Screen('Screens');
 scr.expScreen  = max(scr.allScreens);
 
 % get rid of PsychtoolBox Welcome screen
-Screen('Preference', 'VisualDebugLevel',3);
+Screen('Preference','VisualDebugLevel',3);
+Screen('Preference','SkipSyncTests', 1);
 
 % set resolution
 %if ~const.saveMovie;

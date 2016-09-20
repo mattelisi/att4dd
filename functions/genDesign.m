@@ -33,7 +33,8 @@ design.isi = 0.2;               % target - cue interval in sec
 design.conditions = [1 -1];      % -1=CW ; 1 CCW; 0=control
 design.cue = [1 2];              % 1= pre-cue; 2=post-cue
 design.location = [1 2 3 4];     % cued location (clockwise from top-left)
-design.alpha_values = 0:10:(360-10); % possible physical orientations values
+%design.alpha_values = 0:10:(360-10); % possible physical orientations values
+design.alpha_values = 10:5:(90-10); % possible physical orientations values alpha +-45? 
 
 % method 
 design.alpha_initial = [40];     % initial point of before adjustments
@@ -72,15 +73,49 @@ for location = design.location
     t = t+1;
     
     % set trajectory orientations
-    for p=1:4
-        if p==location
-            eval(['trial(t).alpha_',num2str(p),'= alpha;']);
-            eval(['trial(t).cond_',num2str(p),'= cond;']);
-        else
-            eval(['trial(t).alpha_',num2str(p),'= rand(1)*360;']);
+%     for p=1:4
+%         if p==location
+%             eval(['trial(t).alpha_',num2str(p),'= alpha;']);
+%             eval(['trial(t).cond_',num2str(p),'= cond;']);
+%         else
+%             eval(['trial(t).alpha_',num2str(p),'= rand(1)*360;']);
+%             eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+%         end
+%     end
+
+    for p=1:4 % first assign random orientations (limiting angles for location response)
+        if p == 1
+            eval(['trial(t).alpha_',num2str(p),'= round(rand(1)*90);']);
+            eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+        elseif p == 2
+            eval(['trial(t).alpha_',num2str(p),'= 180 - round(rand(1)*90);']);
+            eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+        elseif p == 3
+            eval(['trial(t).alpha_',num2str(p),'= 360 - round(rand(1)*90);']);
+            eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+        elseif p == 4
+            eval(['trial(t).alpha_',num2str(p),'= 180 + round(rand(1)*90);']);
             eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
         end
     end
+    
+    for p=1:4 % then assign alpha for cued location based on quadrant (limiting angles for location response)
+        if p == location && p == 1
+            eval(['trial(t).alpha_',num2str(p),'= alpha;']);
+            eval(['trial(t).cond_',num2str(p),'= cond;']);
+        elseif p == location && p == 2
+            eval(['trial(t).alpha_',num2str(p),'= 180 - alpha;']);
+            eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+        elseif p == location && p == 3
+            eval(['trial(t).alpha_',num2str(p),'= 360 - alpha;']);
+            eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+        elseif p == location && p == 4
+            eval(['trial(t).alpha_',num2str(p),'= 180 + alpha;']);
+            eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+        end
+    end
+
+    
     
     trial(t).alpha = alpha; % this is the orientation angle of the cued location
                             % the remaining orientations are extracted

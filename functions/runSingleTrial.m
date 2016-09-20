@@ -13,7 +13,9 @@ function [data] = runSingleTrial(td, scr, visual, const, design)
 % clear keyboard buffer
 FlushEvents('KeyDown');
 
-HideCursor;
+if const.TEST == 0;
+    HideCursor;
+end
 
 % targets trajectories
 [path_1, nFrames] = compPathPositions(td.alpha_1, td.trajLength, td.env_speed, scr.fd);
@@ -150,7 +152,9 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
     %drawProbeCue(60,cuedXY,scr,visual);
     drawFixation(visual.fgColor,[scr.centerX, scr.centerY],scr,visual);
     SetMouse(round(scr.centerX+visual.ppd*mx), round(scr.centerY-visual.ppd*my), scr.main); % set mouse
-    HideCursor;
+    if const.TEST == 0;
+        HideCursor;
+    end
     tHClk = Screen('Flip',scr.main);
     if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, 1); end
     click = false;

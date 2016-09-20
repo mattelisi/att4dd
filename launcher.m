@@ -10,6 +10,7 @@
 
 clear all;  clear mex;  clear functions;
 addpath('functions/');
+Screen('Preference','SkipSyncTests', 1);
 
 home;
 tic;
