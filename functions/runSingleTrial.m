@@ -29,6 +29,9 @@ cym = td.fixLoc(2);
 % Set the blend function for drawing the patches
 Screen('BlendFunction', scr.main, GL_ONE, GL_ZERO);
 
+% determine final location of the cued target (necessary to draw response line)
+fcXY = eval[('path_',num2str(td.location),'(end,1:2);'];
+
 % generate noise images
 noiseArray = generateNoiseImage(design,nFrames,visual,td, scr.fd);
 for p = 1:3
