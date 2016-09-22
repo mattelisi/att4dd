@@ -34,7 +34,7 @@ fcXY = eval[('path_',num2str(td.location),'(end,1:2);'];
 
 % compute the equations for the reponse-line
 slope = (cym - fcXY(2)) / (fcXY(1) - cxm);
-intcpt = cym - sloper * cxm;
+intcpt = cym - slope * cxm;
 
 % generate noise images
 noiseArray = generateNoiseImage(design,nFrames,visual,td, scr.fd);
