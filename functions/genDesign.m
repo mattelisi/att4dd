@@ -3,23 +3,23 @@ function [design] = genDesign(scr,as)
 % infinite regress - 4dd pre vs post cueing
 % 
 % Matteo Lisi, 2016
-% 
+% HHH, 2016 - modified code to add location response
 
 ppd = va2pix(1,scr);
 
 %% target parameters
 
 % spatial
-design.ecc = 10;                 % eccentricity of the trajectory midpoint (degree of visual angle)
+design.ecc = [6 8 10 12 14];     % eccentricity of the trajectory midpoint (degree of visual angle)
 design.locationAngle = 40;       % angle of each target locations relative to the horizontla midline
 design.tarFreq = 0.1;            % wavelength (sort of..) of the top noise functions
 design.octaves = 3;              % number of noise layers
-design.sigma = 0.2;             % sigma of the gaussian envelope (sigma = FWHM / 2.35)
+design.sigma = 0.2;              % sigma of the gaussian envelope (sigma = FWHM / 2.35)
 design.constrast = 1;            % gabor's contrast [0 - 1]
 
 % motion & temporal
 design.envelope_speed = 10;      % degree/sec. (2.6*2)/1.8
-design.drifting_speed = 6;      % (cycles of the carrier)/sec.
+design.drifting_speed = 6;       % (cycles of the carrier)/sec.
 % design.control_speed = 1.5;      
 design.trajectoryLength = 4;    % degree of visual angle
 
@@ -32,20 +32,22 @@ design.isi = 0.2;               % target - cue interval in sec
 % conditions 
 design.conditions = [1 -1];      % -1=CW ; 1 CCW; 0=control
 design.cue = [1 2];              % 1= pre-cue; 2=post-cue
-design.location = [1 2 3 4];     % cued location (clockwise from top-left)
+design.location = [1 2 3 4];     % cued location (NW NE SW SE)
 %design.alpha_values = 0:10:(360-10); % possible physical orientations values
-design.alpha_values = 10:5:(90-10); % possible physical orientations values alpha +-45? 
+design.alpha_values = 40:2:50; % possible physical orientations values alpha +-45? 
 
 % method 
-design.alpha_initial = [40];     % initial point of before adjustments
+design.alpha_initial = [60];     % initial point of before adjustments
 design.alpha_step = 1;
+
+design.rep =  5; 
                                 
 %% other parameter
 % design.fixoffset = ppd*[0, 0]; % from screen center
 % design.fixJtStd = 0;
 
 % task structure
-design.nTrialsInBlock = 96;
+design.nTrialsInBlock = 96; % 480? = length(design.ecc)*length(design.conditions)*length(design.cue)*length(design.location)*length(design.alpha_values)
 design.nTrlsBreak = 2000;    % number of trials between breaks, within a block
 design.iti = 0.2;
 design.totSession = 1;
@@ -67,22 +69,13 @@ for drift_speed = design.drifting_speed
 for cond = design.conditions
 for trajLength = design.trajectoryLength
 for ecc = design.ecc
+%for rep = design.rep    
 for cue = design.cue
 for location = design.location
     
     t = t+1;
     
     % set trajectory orientations
-%     for p=1:4
-%         if p==location
-%             eval(['trial(t).alpha_',num2str(p),'= alpha;']);
-%             eval(['trial(t).cond_',num2str(p),'= cond;']);
-%         else
-%             eval(['trial(t).alpha_',num2str(p),'= rand(1)*360;']);
-%             eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
-%         end
-%     end
-
     for p=1:4 % first assign random orientations (limiting angles for location response)
         if p == 1
             eval(['trial(t).alpha_',num2str(p),'= round(rand(1)*90);']);
@@ -98,7 +91,6 @@ for location = design.location
             eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
         end
     end
-    
     for p=1:4 % then assign alpha for cued location based on quadrant (limiting angles for location response)
         if p == location && p == 1
             eval(['trial(t).alpha_',num2str(p),'= alpha;']);
@@ -114,12 +106,18 @@ for location = design.location
             eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
         end
     end
-
-    
-    
+%     for p=1:4 % OLD CODE FOR TRAJECTORY ORIENTATIONS
+%         if p==location
+%             eval(['trial(t).alpha_',num2str(p),'= alpha;']);
+%             eval(['trial(t).cond_',num2str(p),'= cond;']);
+%         else
+%             eval(['trial(t).alpha_',num2str(p),'= rand(1)*360;']);
+%             eval(['trial(t).cond_',num2str(p),'= sign(randn(1));']);
+%         end
+%     end
+      
     trial(t).alpha = alpha; % this is the orientation angle of the cued location
-                            % the remaining orientations are extracted
-                            % randomly each trial from U(0, 360)
+                            % the remaining orientations are extracted randomly each trial from U(0, 360)
     trial(t).cue = cue;
     trial(t).location = location;
 
@@ -131,10 +129,10 @@ for location = design.location
     trial(t).drift_speed = drift_speed;
     trial(t).trajLength = trajLength;
     %trial(t).initPos = initPos;
-    trial(t).ecc = ecc;
+    trial(t).ecc = ecc; 
+    %trial(t).ecc = design.ecc(1) + rand * (design.ecc(2)-design.ecc(1)); % TO SELECT ECC FROM A RANGE OF VALUES
     trial(t).cond = cond;
 
-    %
     trial(t).fixDur = round((design.fixDur + design.fixDuJ*rand)/scr.fd)*scr.fd;
     trial(t).fixLoc = [scr.centerX scr.centerY]; %+ design.fixoffset + round(randn(1,2)*design.fixJtStd*ppd);
     
@@ -180,6 +178,4 @@ design.blockOrder = 1;
 %     beginB  = beginB + design.nTrialsInBlock;
 %     endB    = endB   + design.nTrialsInBlock;
 % end
-
-
 

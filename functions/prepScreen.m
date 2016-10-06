@@ -9,12 +9,11 @@ if const.TEST == 0;
     HideCursor;
 end
 
-scr.subDist = 120;   % subject distance (cm)
+scr.subDist = 50;   % subject distance (cm) - 120 for projector
 scr.colDept = 32;
-scr.width   = 1375;  % monitor width (mm) (435 desk monitor)
+scr.width   = 400;  % monitor width (mm) (435 desk monitor) - 1375 for projector
 
-% If there are multiple displays guess that one without the menu bar is the
-% best choice.  Dislay 0 has the menu bar.
+% If there are multiple displays guess that one without the menu bar is the best choice.  Dislay 0 has the menu bar.
 scr.allScreens = Screen('Screens');
 scr.expScreen  = max(scr.allScreens);
 

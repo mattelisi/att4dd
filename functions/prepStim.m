@@ -12,6 +12,8 @@ visual.black = BlackIndex(scr.main);
 visual.white = WhiteIndex(scr.main);
 visual.bgColor = round((visual.black + visual.white) / 2);     % background color
 visual.fgColor = visual.black;
+visual.respColor = [150 150 150]; % response tool color
+visual.respLL = 1000;           % response tool length
 
 % coordinates
 visual.scrCenter = [scr.centerX scr.centerY scr.centerX scr.centerY];
@@ -28,13 +30,13 @@ if mod(visual.tarSize,2) == 0
 end
 visual.res = 1*[visual.tarSize visual.tarSize];
 
-% target coordinates
-dist_x = round(visual.ppd*(cosd(design.locationAngle)*design.ecc));
-dist_y = round(visual.ppd*(sind(design.locationAngle)*design.ecc));
-visual.loc_1 = [scr.centerX scr.centerY] + [-dist_x -dist_y];
-visual.loc_2 = [scr.centerX scr.centerY] + [dist_x -dist_y];
-visual.loc_3 = [scr.centerX scr.centerY] + [-dist_x dist_y];
-visual.loc_4 = [scr.centerX scr.centerY] + [dist_x dist_y];
+% % target coordinates
+% dist_x = round(visual.ppd*(cosd(design.locationAngle)*design.ecc));
+% dist_y = round(visual.ppd*(sind(design.locationAngle)*design.ecc));
+% visual.loc_1 = [scr.centerX scr.centerY] + [-dist_x -dist_y];
+% visual.loc_2 = [scr.centerX scr.centerY] + [dist_x -dist_y];
+% visual.loc_3 = [scr.centerX scr.centerY] + [-dist_x dist_y];
+% visual.loc_4 = [scr.centerX scr.centerY] + [dist_x dist_y];
 
 % gamma correction
 if const.gammaLinear

@@ -6,15 +6,12 @@ function [design] = runTrials(design, datFile, scr, visual, const, el)
 % - manual adjustments
 %
 
-% hide cursor 
-
 if const.TEST == 0;
     HideCursor;
 end
 
 % preload important functions
-% NOTE: adjusting timer with GetSecsTest
-% has become superfluous in OSX
+% NOTE: adjusting timer with GetSecsTest has become superfluous in OSX
 Screen(scr.main, 'Flip');
 GetSecs;
 WaitSecs(.2);
@@ -55,7 +52,6 @@ for b = 1:design.nBlocks
         ntTrial = length(design.b(b).trial);
     end
     ntt = ntTrain + ntTrial;
-
     
     % instructions
     systemFont = 'Arial'; % 'Courier';
@@ -178,6 +174,7 @@ for b = 1:design.nBlocks
 % %         Screen('Flip', scr.main);
 % %         WaitSecs(0.5);
         
+
         %% RUN SINGLE TRIAL
         
         [data] = runSingleTrial(td, scr, visual, const, design);
@@ -203,16 +200,14 @@ for b = 1:design.nBlocks
 
             fprintf(1,' ... trial added, now total of %i trials',ntt);
         end
-        WaitSecs(design.iti);
-        
+        WaitSecs(design.iti);      
         
         %% count trials for movie (if required)
         if const.saveMovie
             if trial > const.nTrialMovie
                 return
             end
-        end
-        
+        end        
     end
 end
 
