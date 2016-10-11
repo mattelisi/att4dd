@@ -10,7 +10,7 @@ ppd = va2pix(1,scr);
 %% target parameters
 
 % spatial
-design.ecc = [6 8 10 12 14];     % eccentricity of the trajectory midpoint (degree of visual angle)
+design.ecc = [6 8 10 12 14 16];     % eccentricity of the trajectory midpoint (degree of visual angle)
 design.locationAngle = 40;       % angle of each target locations relative to the horizontla midline
 design.tarFreq = 0.1;            % wavelength (sort of..) of the top noise functions
 design.octaves = 3;              % number of noise layers
@@ -34,13 +34,13 @@ design.conditions = [1 -1];      % -1=CW ; 1 CCW; 0=control
 design.cue = [1 2];              % 1= pre-cue; 2=post-cue
 design.location = [1 2 3 4];     % cued location (NW NE SW SE)
 %design.alpha_values = 0:10:(360-10); % possible physical orientations values
-design.alpha_values = 40:2:50; % possible physical orientations values alpha +-45? 
+design.alpha_values = 40:5:50; % possible physical orientations values alpha +-45? 
 
 % method 
 design.alpha_initial = [60];     % initial point of before adjustments
 design.alpha_step = 1;
 
-design.rep =  5; 
+design.rep =  1; 
                                 
 %% other parameter
 % design.fixoffset = ppd*[0, 0]; % from screen center
@@ -69,7 +69,7 @@ for drift_speed = design.drifting_speed
 for cond = design.conditions
 for trajLength = design.trajectoryLength
 for ecc = design.ecc
-%for rep = design.rep    
+for rep = 1:design.rep    
 for cue = design.cue
 for location = design.location
     
@@ -136,6 +136,7 @@ for location = design.location
     trial(t).fixDur = round((design.fixDur + design.fixDuJ*rand)/scr.fd)*scr.fd;
     trial(t).fixLoc = [scr.centerX scr.centerY]; %+ design.fixoffset + round(randn(1,2)*design.fixJtStd*ppd);
     
+end
 end
 end
 end

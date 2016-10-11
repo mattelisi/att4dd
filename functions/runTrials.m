@@ -6,8 +6,9 @@ function [design] = runTrials(design, datFile, scr, visual, const, el)
 % - manual adjustments
 %
 
-if const.TEST == 0;
-    HideCursor;
+% skip sync tests if testing code
+if const.TEST == 1;
+    Screen('Preference','SkipSyncTests', 1);
 end
 
 % preload important functions

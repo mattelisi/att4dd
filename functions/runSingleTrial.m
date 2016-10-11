@@ -90,11 +90,11 @@ drawFixation(visual.fixCol,td.fixLoc,scr,visual);
 tFix = Screen('Flip', scr.main,0);
 
 if const.saveMovie
-    Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, round(td.fixDur/scr.fd)); 
+    Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, round(td.fixDur/scr.fd));
 end
 
 % tFlip = tFix + td.fixDur;
-WaitSecs(td.fixDur - 2*design.preRelease); 
+WaitSecs(td.fixDur - 2*design.preRelease);
 Screen('Flip', scr.main);
 
 %% cue
@@ -122,6 +122,9 @@ WaitSecs(design.isi);
 
 
 %% show stimuli
+
+tBeg = GetSecs;
+
 for i = 1:nFrames
     
     Screen('DrawTextures', scr.main, motionTex(:,i), [], squeeze(rectAll(:,:,i)), angles);
@@ -143,7 +146,7 @@ for i = 1:nFrames
     
     %drawRespTool3(scr, td.location, visual, fcXY, slope, scr.centerX, scr.centerY); % JUST FOR TESTING
     %Screen('DrawLine', scr.main, [1 0 0 ], fcXYstart(1), fcXYstart(2), fcXY(1), fcXY(2) , 3); % JUST FOR TESTING (trajectory line)
-
+    
     tFlip = Screen('Flip', scr.main, tFlip + scr.fd);
     if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, 1); end
 end
@@ -151,14 +154,14 @@ end
 
 if ex_fg~=2 % proceed to response only if fixation was not broken
     
-%     %% post cue --- REMOVE THIS (POST CUE WILL ONLY BE RESPONSE TOOL)
-%      if td.cue == 2
-%          drawCue(scr, design, td.location);
-%          drawFixation(visual.fixCol,td.fixLoc,scr,visual);
-%          Screen('Flip', scr.main);
-%          if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, round(design.cueDuration/scr.fd)); end
-%          WaitSecs(design.cueDuration);
-%      end
+    %     %% post cue --- REMOVE THIS (POST CUE WILL ONLY BE RESPONSE TOOL)
+    %      if td.cue == 2
+    %          drawCue(scr, design, td.location);
+    %          drawFixation(visual.fixCol,td.fixLoc,scr,visual);
+    %          Screen('Flip', scr.main);
+    %          if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, round(design.cueDuration/scr.fd)); end
+    %          WaitSecs(design.cueDuration);
+    %      end
     
     % blank screen before response tool appears
     Screen('Flip', scr.main);
@@ -170,23 +173,22 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
     % Change the blend function to draw an antialiased shape
     Screen('BlendFunction', scr.main, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-      % code for making direction arrow response
-%     point = rand*2*pi;
-%     %lastPoint = deg2rad(GetMouseWheel)+point;
-%     [mx ,my] = pol2cart(point,1);
-%     [px ,py] = pol2cart(point,60);
-%     [sx ,sy] = pol2cart(point,-60);
-%     drawArrow([sx+cxm(1) -sy+cym(1)],[px+cxm(1) ,-py+cym(1)],20,scr,60,4);
-        
+    % code for making direction arrow response
+    %point = rand*2*pi;
+    %lastPoint = deg2rad(GetMouseWheel)+point;
+    %[mx ,my] = pol2cart(point,1);
+    %[px ,py] = pol2cart(point,60);
+    %[sx ,sy] = pol2cart(point,-60);
+    %drawArrow([sx+cxm(1) -sy+cym(1)],[px+cxm(1) ,-py+cym(1)],20,scr,60,4);
     %drawProbeCue(60,cuedXY,scr,visual);
-    drawFixation(visual.fgColor,[scr.centerX, scr.centerY],scr,visual);
-%     SetMouse(round(scr.centerX+visual.ppd*mx), round(scr.centerY-visual.ppd*my), scr.main); % set mouse
+    %drawFixation(visual.fgColor,[scr.centerX, scr.centerY],scr,visual);
+    %SetMouse(round(scr.centerX+visual.ppd*mx), round(scr.centerY-visual.ppd*my), scr.main); % set mouse
     SetMouse(scr.centerX, scr.centerY, scr.main); % set mouse
     
-    if const.TEST == 0;
+    if const.TEST == 1;
         HideCursor;
     end
-
+    
     tHClk = Screen('Flip',scr.main);
     if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, 1); end
     click = false;
@@ -194,7 +196,7 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
     % RESPONSE SCREEN draw line through x-endpoint of target trajectory (observer adjusts perceived y-endpoint)
     % Screen('DrawLine', scr.main, [1 0 0], cxm, cym, cuedXY(1), cuedXY(2), 2);
     drawRespTool3(scr, td.location, visual, fcXY, slope, scr.centerX, scr.centerY); % RESPONSE TOOL DIAGONAL
-
+    
     while ~click
         [mx,my,buttons] = GetMouse(scr.main);
         %[lastPoint,~] = cart2pol(mx-scr.centerX, scr.centerY-my);
@@ -206,11 +208,11 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
         %drawFixation(visual.fgColor,[scr.centerX, scr.centerY],scr,visual);
         
         % ADD RESPONSE TOOL (SLIDER TO MARK LOCATION)
-        [xResp, yResp] = drawRespTool3(scr, td.location, visual, fcXY, slope, mx, my); % RESPONSE SLIDER TOOL ORTHOGONAL 
-         %[xResp, yResp] = drawRespTool2(scr, td.location, visual, fcXY, slope, mx, my); % RESPONSE SLIDER TOOL HORIZONTAL
+        [xResp, yResp] = drawRespTool3(scr, td.location, visual, fcXY, slope, mx, my); % RESPONSE SLIDER TOOL ORTHOGONAL
+        %[xResp, yResp] = drawRespTool2(scr, td.location, visual, fcXY, slope, mx, my); % RESPONSE SLIDER TOOL HORIZONTAL
         
         lastPoint = [xResp, yResp];
-
+        
         %drawCue(scr, design, td.location, 10);
         %drawProbeCue(60,cuedXY,scr,visual);
         Screen('Flip',scr.main);
@@ -229,16 +231,18 @@ end
 
 %% trial end
 
+tEnd = GetSecs;
+
 switch ex_fg
     
     case 2
         data = 'fixBreak';
-
+        
     case 1
         
         WaitSecs(0.2);
         if const.saveMovie; Screen('AddFrameToMovie',scr.main,visual.imageRect,'frontBuffer',const.moviePtr,round(0.2/scr.fd)); end
-
+        
         % collect trial information
         trialData = sprintf('%.2f\t%.2f\t%.2f\t%.2f\t%i\t%i\t%i\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f',...
             [td.alpha td.env_speed td.drift_speed td.trajLength td.cue td.location td.cond td.alpha_1 td.alpha_2 td.alpha_3 td.alpha_4 td.ecc]);
@@ -247,7 +251,7 @@ switch ex_fg
         timeData = sprintf('%i\t%i\t%i\t%i\t%i',round(1000*([tFix tBeg tResp tEnd]-tBeg)));
         
         % determine response data
-        respData = sprintf('%.2f\t%.2f\t%i',resp, round(1000*(tResp - tHClk)));
+        respData = sprintf('%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%i',fcXYstart,fcXY,resp,round(1000*(tResp - tHClk)));
         
         % collect data for tab [6 x trialData, 5 x timeData, 1 x respData]
         data = sprintf('%s\t%s\t%s',trialData, timeData, respData);

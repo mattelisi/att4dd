@@ -122,7 +122,7 @@ for sess = 1:nsess
     as = mod(actualSess,design.totSession);
     if as==0; as=design.totSession; end
     
-%     instrucyions screen
+%     instructions screen
 %     instructionsScreen = imread('instructionsScreen.bmp','BMP');
 %     Screen('PutImage', scr.main, instructionsScreen);
 %     Screen('Flip', scr.main);

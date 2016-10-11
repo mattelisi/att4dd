@@ -5,10 +5,6 @@ function scr = prepScreen(const)
 % Matteo Lisi, 2013
 %
 
-if const.TEST == 0;
-    HideCursor;
-end
-
 scr.subDist = 50;   % subject distance (cm) - 120 for projector
 scr.colDept = 32;
 scr.width   = 400;  % monitor width (mm) (435 desk monitor) - 1375 for projector
@@ -19,7 +15,10 @@ scr.expScreen  = max(scr.allScreens);
 
 % get rid of PsychtoolBox Welcome screen
 Screen('Preference','VisualDebugLevel',3);
-Screen('Preference','SkipSyncTests', 1);
+% skip sync tests if testing code
+if const.TEST == 1;
+    Screen('Preference','SkipSyncTests', 1);
+end
 
 % set resolution
 %if ~const.saveMovie;
