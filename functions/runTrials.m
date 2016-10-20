@@ -11,6 +11,10 @@ if const.TEST == 1;
     Screen('Preference','SkipSyncTests', 1);
 end
 
+if const.TEST == 0;
+    HideCursor;
+end
+
 % preload important functions
 % NOTE: adjusting timer with GetSecsTest has become superfluous in OSX
 Screen(scr.main, 'Flip');

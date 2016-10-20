@@ -13,10 +13,6 @@ function [data] = runSingleTrial(td, scr, visual, const, design)
 % clear keyboard buffer
 FlushEvents('KeyDown');
 
-if const.TEST == 0;
-    HideCursor;
-end
-
 if const.TEST == 1;
     ShowCursor('CrossHair');
 end
@@ -72,7 +68,90 @@ fcXY = rectAll(1:2,td.location,nFrames) + round(visual.tarSize); % end XY of tar
 % compute the equations for the reponse-line
 % slope = (cym - fcXY(2)) / (fcXY(1) - cxm);
 slope = (fcXY(2) - fcXYstart(2)) / (fcXY(1) - fcXYstart(1));
-intcpt = fcXYstart(2) - (slope * fcXYstart(1));
+%intcpt = fcXYstart(2) - (slope * fcXYstart(1));
+rnum = Randi(50);
+ll = round(visual.respLL/2) + rnum;
+m = -1/slope; % slope of orthogonal line
+
+x_f = fcXY(1);
+y_f = fcXY(2);
+x_f1 = 0; % response tool start
+y_f1 = 0; % response tool start
+x_f2 = 0; % response tool finish
+y_f2 = 0; % response tool finish
+x_m = 0; % mouse appearance location
+y_m = 0; % mouse appearance location
+
+if td.alpha > 0
+    switch td.location
+        case 1
+            x_f1 = x_f - ll; 
+            y_f1 = y_f - abs(m*(ll));
+            x_f2 = x_f + ll;
+            y_f2 = y_f + abs(m*(ll));
+            x_m = round(x_f2);
+            y_m = round(y_f2);
+        case 2
+            x_f1 = x_f - ll;
+            y_f1 = y_f + abs(m*(ll));
+            x_f2 = x_f + ll;
+            y_f2 = y_f - abs(m*(ll));
+            x_m = round(x_f1);
+            y_m = round(y_f1);
+        case 3
+            x_f1 = x_f - ll;
+            y_f1 = y_f + abs(m*(ll));
+            x_f2 = x_f + ll;
+            y_f2 = y_f - abs(m*(ll));
+            x_m = round(x_f2);
+            y_m = round(y_f2);
+        case 4
+            x_f1 = x_f - ll;
+            y_f1 = y_f - abs(m*(ll));
+            x_f2 = x_f + ll;
+            y_f2 = y_f + abs(m*(ll)); 
+            x_m = round(x_f1);
+            y_m = round(y_f1);
+    end
+elseif td.alpha < 0
+    switch td.location
+        case 1
+            x_f1 = x_f - ll; 
+            y_f1 = y_f + abs(m*(ll)); 
+            x_f2 = x_f + ll;
+            y_f2 = y_f - abs(m*(ll));
+            x_m = round(x_f1);
+            y_m = round(y_f1);
+        case 2
+            x_f1 = x_f - ll;
+            y_f1 = y_f - abs(m*(ll));
+            x_f2 = x_f + ll; 
+            y_f2 = y_f + abs(m*(ll));
+            x_m = round(x_f2);
+            y_m = round(y_f2);
+        case 3
+            x_f1 = x_f - ll;
+            y_f1 = y_f - abs(m*(ll));
+            x_f2 = x_f + ll;
+            y_f2 = y_f + abs(m*(ll));
+            x_m = round(x_f1);
+            y_m = round(y_f1);
+        case 4
+            x_f1 = x_f - ll;
+            y_f1 = y_f + abs(m*(ll));
+            x_f2 = x_f + ll;
+            y_f2 = y_f - abs(m*(ll));
+            x_m = round(x_f2);
+            y_m = round(y_f2);
+    end
+else
+            x_f1 = 1;
+            y_f1 = 1;
+            x_f2 = 1;
+            y_f2 = 1;
+            x_m = 1;
+            y_m = 1;
+end
 
 % texture orientation angles
 angles = 90-[td.alpha_1, td.alpha_2, td.alpha_3, td.alpha_4] -[td.cond_1*90, td.cond_2*90, td.cond_3*90, td.cond_4*90];
@@ -144,24 +223,24 @@ for i = 1:nFrames
         
     end
     
-    %drawRespTool3(scr, td.location, visual, fcXY, slope, scr.centerX, scr.centerY); % JUST FOR TESTING
-    %Screen('DrawLine', scr.main, [1 0 0 ], fcXYstart(1), fcXYstart(2), fcXY(1), fcXY(2) , 3); % JUST FOR TESTING (trajectory line)
+%     drawRespTool3(scr, td.location, td.alpha, visual, fcXY, slope, x_m, y_m); % JUST FOR TESTING
+%     Screen('DrawLine', scr.main, [1 0 0 ], fcXYstart(1), fcXYstart(2), fcXY(1), fcXY(2) , 3); % JUST FOR TESTING (trajectory line)
     
     tFlip = Screen('Flip', scr.main, tFlip + scr.fd);
     if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, 1); end
 end
-%WaitSecs(.75); % JUST FOR TESTING
+% WaitSecs(.5); % JUST FOR TESTING
 
 if ex_fg~=2 % proceed to response only if fixation was not broken
     
-    %     %% post cue --- REMOVE THIS (POST CUE WILL ONLY BE RESPONSE TOOL)
-    %      if td.cue == 2
-    %          drawCue(scr, design, td.location);
-    %          drawFixation(visual.fixCol,td.fixLoc,scr,visual);
-    %          Screen('Flip', scr.main);
-    %          if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, round(design.cueDuration/scr.fd)); end
-    %          WaitSecs(design.cueDuration);
-    %      end
+    %% post cue --- REMOVE THIS (POST CUE WILL ONLY BE RESPONSE TOOL)
+    if td.cue == 2 || 1
+        drawCue(scr, design, td.location);
+        drawFixation(visual.fixCol,td.fixLoc,scr,visual);
+        Screen('Flip', scr.main);
+        if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, round(design.cueDuration/scr.fd)); end
+        WaitSecs(design.cueDurationPost);
+    end
     
     % blank screen before response tool appears
     Screen('Flip', scr.main);
@@ -172,7 +251,7 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
     
     % Change the blend function to draw an antialiased shape
     Screen('BlendFunction', scr.main, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+       
     % code for making direction arrow response
     %point = rand*2*pi;
     %lastPoint = deg2rad(GetMouseWheel)+point;
@@ -183,19 +262,19 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
     %drawProbeCue(60,cuedXY,scr,visual);
     %drawFixation(visual.fgColor,[scr.centerX, scr.centerY],scr,visual);
     %SetMouse(round(scr.centerX+visual.ppd*mx), round(scr.centerY-visual.ppd*my), scr.main); % set mouse
-    SetMouse(scr.centerX, scr.centerY, scr.main); % set mouse
-    
-    if const.TEST == 1;
+    SetMouse(x_m, y_m, scr.main); % set mouse
+   
+    if const.TEST == 0;
         HideCursor;
     end
-    
+ 
     tHClk = Screen('Flip',scr.main);
     if const.saveMovie; Screen('AddFrameToMovie', scr.main, visual.imageRect, 'frontBuffer', const.moviePtr, 1); end
     click = false;
-    
+        
     % RESPONSE SCREEN draw line through x-endpoint of target trajectory (observer adjusts perceived y-endpoint)
     % Screen('DrawLine', scr.main, [1 0 0], cxm, cym, cuedXY(1), cuedXY(2), 2);
-    drawRespTool3(scr, td.location, visual, fcXY, slope, scr.centerX, scr.centerY); % RESPONSE TOOL DIAGONAL
+    drawRespTool3(scr, td.location, td.alpha, visual, fcXY, slope, x_m, y_m, rnum); % RESPONSE TOOL ORTHOGONAL
     
     while ~click
         [mx,my,buttons] = GetMouse(scr.main);
@@ -208,7 +287,7 @@ if ex_fg~=2 % proceed to response only if fixation was not broken
         %drawFixation(visual.fgColor,[scr.centerX, scr.centerY],scr,visual);
         
         % ADD RESPONSE TOOL (SLIDER TO MARK LOCATION)
-        [xResp, yResp] = drawRespTool3(scr, td.location, visual, fcXY, slope, mx, my); % RESPONSE SLIDER TOOL ORTHOGONAL
+        [xResp, yResp] = drawRespTool3(scr, td.location, td.alpha, visual, fcXY, slope, mx, my, rnum); % RESPONSE SLIDER TOOL ORTHOGONAL
         %[xResp, yResp] = drawRespTool2(scr, td.location, visual, fcXY, slope, mx, my); % RESPONSE SLIDER TOOL HORIZONTAL
         
         lastPoint = [xResp, yResp];
@@ -251,7 +330,8 @@ switch ex_fg
         timeData = sprintf('%i\t%i\t%i\t%i\t%i',round(1000*([tFix tBeg tResp tEnd]-tBeg)));
         
         % determine response data
-        respData = sprintf('%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%i',fcXYstart,fcXY,resp,round(1000*(tResp - tHClk)));
+        respData = sprintf('%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%i\t%.2f\t%.2f\t%.2f\t%.2f',...
+            fcXYstart,fcXY,resp,round(1000*(tResp - tHClk)),x_f1,y_f1,x_f2,y_f2);
         
         % collect data for tab [6 x trialData, 5 x timeData, 1 x respData]
         data = sprintf('%s\t%s\t%s',trialData, timeData, respData);

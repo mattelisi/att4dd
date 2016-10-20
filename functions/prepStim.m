@@ -13,7 +13,7 @@ visual.white = WhiteIndex(scr.main);
 visual.bgColor = round((visual.black + visual.white) / 2);     % background color
 visual.fgColor = visual.black;
 visual.respColor = [150 150 150]; % response tool color
-visual.respLL = 1000;           % response tool length
+visual.respLL = 500;           % response tool length
 
 % coordinates
 visual.scrCenter = [scr.centerX scr.centerY scr.centerX scr.centerY];

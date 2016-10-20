@@ -39,13 +39,14 @@ for i = 1:nfiles;
     idTable{i,2} = idTable{i,1}(1:2); % subject id
     idTable{i,3} = idTable{i,1}(5:6); % subject session number
     idTable{i,4} = idTable{i,1}(3:4); % subject initials
+    idTable{i,5} = idTable{i,1}(1:4); % unique subject identifier
 end
 
 % step through each folder and get data
 bigD = {};
 ids = cell2mat(idTable(:,2));
 sess = cell2mat(idTable(:,3));
-nSess = length(ids); % total number of sessions
+nSess = size(idTable,1); % total number of sessions
 idTxtAll = unique(idTable(:,1));
 idSub = unique(idTable(:,2));
 
@@ -112,7 +113,8 @@ idTableLabels = {'filename','id','session','initials'};
 bigDLabels = {'id','session','data_txt','data_mat'};
 allDLabels = {'id','session','3=block','4=trial','5=alpha','6=env_speed','7=drift_speed','8=trajLength',...
     '9=cue','10=location','11=cond','12=alpha_1','13=alpha_2','14=alpha_3','15=alpha_4','16=ecc',...
-    '17=c1','18=c2','19=c3','20=c4','21=xStart','22=yStart','23=xEnd','24=yEnd','25=xResp','26=yResp','27=tResp'};
+    '17=c1','18=c2','19=c3','20=c4','21=xStart','22=yStart','23=xEnd','24=yEnd','25=xResp','26=yResp','27=tResp',...
+    '28=xRLineSt','29=yRLineSt','30=xRLineEnd','31=yRLineEnd'};
 
 %%% CREATE USEFUL VARIABLES
 ids = unique(allD(:,1));
@@ -128,6 +130,19 @@ nEcc = length(condEcc);         % n of different eccentricities
 numTotTr = size(allD,1);        % total number of trials collected
 
 pxlDegree = 29.2483; % 29.2483 from visual.ppd = number of pixels equal to 1-dva
+
+% DEFINE COLORS
+dkRed=[.4,.1,.1];
+ltRed=[1,.2,.2];
+myRed=[.5,.2,.2];
+myBlue=[.2,.2,.5];
+dkBlue=[.1,.1,.4];
+ltBlue=[.4,.4,1];
+vltBlue=[.45,.45,1];
+myPurple=[.6,.1,.6];
+myGreen=[.2,.7,.2];
+myGray=[.4,.4,.4];
+
 
 %%% COMPUTE THE ERROR ALONG EACH AXIS (Xprobe - Xresp, Yprobe - Yresp)
 locData = zeros(numTotTr,5);
@@ -173,7 +188,7 @@ for i=1:length(condCue)
 end
 set(gca,'xtick',1:nEcc,'XTickLabel',condEcc); % label the x-axis
 xlim([0.5 nEcc+.5]);
-ylim([0 100]);
+ylim([0 200]);
 xlabel('Eccentricity')
 ylabel('Number of trials completed')
 title('Number of trials per condition');
@@ -213,15 +228,38 @@ set(gcf,'color','w')
 hold off
 
 
+%% % FIG 2. Distribution of localization errors
+figure;
+hold on
+r1=find(allD(:,11)==-1 );
+r2=find(allD(:,11)==1 );
 
-
+plot(locData(r1,1),locData(r1,2),'+','MarkerEdgeColor','r','MarkerSize',4) %
+plot(locData(r2,1),locData(r2,2),'+','MarkerEdgeColor','b','MarkerSize',4) %
+xlim([-200 200]);
+ylim([-200 200]);
+plot([0 0],[-200 200],'k--','LineWidth',1);
+plot([-200 200],[0 0],'k--','LineWidth',1);
+set(gcf,'Color','w')
+set(gca,'DataAspectRatio',[1 1 1])
+set(gca,'XDir','reverse')
+set(gca,'XTick',-200:100:200); % label the x-axis
+set(gca,'XTickLabel',{-200,-100,0,100,200},'FontSize',9,'FontName','Helvetica'); % label the x-axis
+set(gca,'YTick',-200:100:200); % label the y-axis
+set(gca,'YTickLabel',{-200,-100,0,100,200},'FontSize',9,'FontName','Helvetica'); % label the y-axis
+% xlabel('Direction of error on x-axis (pixels)','FontSize',14);
+% ylabel('Direction of error on y-axis (pixels)','FontSize',14);
+plot(mean(locData(r1,1)),mean(locData(r1,2)),'ko','MarkerFaceColor','r','MarkerSize',12)
+plot(mean(locData(r2,1)),mean(locData(r2,2)),'ko','MarkerFaceColor','b','MarkerSize',12)
+% text(190,190,'Fixation-only','Color',[.2 .2 .2],'FontSize',16)
+hold off
 
 
 %% SAVE FIGURES AS PNG (for draft papers and ppt)
 cd('figures');
-figure(1);saveas(gcf,'Fig1-subjectTrials.png');
-figure(2);saveas(gcf,'Fig2-condTrials.png');
-figure(3);saveas(gcf,'Fig3-locError.png');
+figure(1);saveas(gcf,'FigA-subjectTrials.png');
+figure(2);saveas(gcf,'FigB-condTrials.png');
+figure(3);saveas(gcf,'Fig1-locError.png');
 % figure(4);saveas(gcf,'Fig4-percentTrialsCorrect.png');
 % figure(5);saveas(gcf,'Fig5-locError.png');
 % figure(6);saveas(gcf,'Fig6-ANOVA.png');

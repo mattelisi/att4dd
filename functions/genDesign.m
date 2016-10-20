@@ -10,7 +10,7 @@ ppd = va2pix(1,scr);
 %% target parameters
 
 % spatial
-design.ecc = [6 8 10 12 14 16];     % eccentricity of the trajectory midpoint (degree of visual angle)
+design.ecc = [8  10  12];     % eccentricity of the trajectory midpoint (degree of visual angle)
 design.locationAngle = 40;       % angle of each target locations relative to the horizontla midline
 design.tarFreq = 0.1;            % wavelength (sort of..) of the top noise functions
 design.octaves = 3;              % number of noise layers
@@ -19,7 +19,7 @@ design.constrast = 1;            % gabor's contrast [0 - 1]
 
 % motion & temporal
 design.envelope_speed = 10;      % degree/sec. (2.6*2)/1.8
-design.drifting_speed = 6;       % (cycles of the carrier)/sec.
+design.drifting_speed = 8;       % (cycles of the carrier)/sec.
 % design.control_speed = 1.5;      
 design.trajectoryLength = 4;    % degree of visual angle
 
@@ -27,14 +27,15 @@ design.fixDur = 0.400;          % minimum fixation duration [s]
 design.fixDuJ = 0.200;          % additional fixation duration jitter [s]
 design.motionType = 'triangular';   % allowed: triangular, sinusoidal
 design.cueDuration = 1;         % cue duration in sec
+design.cueDurationPost = 0.200; % post cue duration in sec
 design.isi = 0.2;               % target - cue interval in sec
 
 % conditions 
 design.conditions = [1 -1];      % -1=CW ; 1 CCW; 0=control
 design.cue = [1 2];              % 1= pre-cue; 2=post-cue
-design.location = [1 2 3 4];     % cued location (NW NE SW SE)
+design.location = [1 2 3 4];     % cued location [1 2 3 4] = [NW NE SW SE]
 %design.alpha_values = 0:10:(360-10); % possible physical orientations values
-design.alpha_values = 40:5:50; % possible physical orientations values alpha +-45? 
+design.alpha_values = [45 -45]; % possible physical orientations values alpha +-45? 
 
 % method 
 design.alpha_initial = [60];     % initial point of before adjustments
@@ -47,7 +48,7 @@ design.rep =  1;
 % design.fixJtStd = 0;
 
 % task structure
-design.nTrialsInBlock = 96; % 480? = length(design.ecc)*length(design.conditions)*length(design.cue)*length(design.location)*length(design.alpha_values)
+design.nTrialsInBlock = 48; % 480? = length(design.ecc)*length(design.conditions)*length(design.cue)*length(design.location)*length(design.alpha_values)
 design.nTrlsBreak = 2000;    % number of trials between breaks, within a block
 design.iti = 0.2;
 design.totSession = 1;
@@ -165,18 +166,18 @@ r = randperm(length(trial));
 trial = trial(r);
 
 % generate blocks
-design.nBlocks = 1;
+design.nBlocks = 2;
 design.b(1).trial = trial;
 design.blockOrder = 1;
 
-% design.nBlocks = length(trial)/design.nTrialsInBlock;
-% design.blockOrder = 1:design.nBlocks;
-% 
-% b=1; beginB=b; endB=design.nTrialsInBlock;
-% 
-% for i = 1:design.nBlocks
-%     design.b(i).trial = trial(beginB:endB);
-%     beginB  = beginB + design.nTrialsInBlock;
-%     endB    = endB   + design.nTrialsInBlock;
-% end
+design.nBlocks = length(trial)/design.nTrialsInBlock;
+design.blockOrder = 1:design.nBlocks;
+
+b=1; beginB=b; endB=design.nTrialsInBlock;
+
+for i = 1:design.nBlocks
+    design.b(i).trial = trial(beginB:endB);
+    beginB  = beginB + design.nTrialsInBlock;
+    endB    = endB   + design.nTrialsInBlock;
+end
 

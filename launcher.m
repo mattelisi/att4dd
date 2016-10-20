@@ -10,7 +10,6 @@
 
 clear all;  clear mex;  clear functions;
 addpath('functions/');
-Screen('Preference','SkipSyncTests', 1);
 
 home;
 tic;
@@ -20,6 +19,10 @@ const.TEST        = 1;      % 1 = test in dummy mode, 0 = test in eyelink mode
 const.gammaLinear = 0;      % use monitor linearization
 const.saveMovie   = 0;
 const.nTrialMovie   = 10;
+
+if const.TEST == 1
+    Screen('Preference','SkipSyncTests', 1);
+end
 
 % const.gamma    = '../../gammaCalibration/EyelinkBoxcalData.mat';
 % const.gammaRGB = '../../gammaCalibration/EyelinkBoxcalDataRGB.mat';
